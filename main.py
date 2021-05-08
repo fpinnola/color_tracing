@@ -1,14 +1,16 @@
-''' 
+'''
 Credit: https://www.geeksforgeeks.org/live-webcam-drawing-using-opencv/
 '''
 
 # importing the modules
 import cv2
+import time
 import numpy as np
 
 # set Width and Height of output Screen
 frameWidth = 640
 frameHeight = 480
+timeStart = 3
 
 # capturing Video from Webcam
 cap = cv2.VideoCapture(0)
@@ -18,20 +20,20 @@ cap.set(4, frameHeight)
 # set brightness, id is 10 and
 # value can be changed accordingly
 cap.set(10,150)
-	
+
 # object color values
 myColors = [[5, 107, 0, 19, 255, 255]]
 
 # color values which will be used to paint
 # values needs to be in BGR
-myColorValues = [[51, 153, 255],		
+myColorValues = [[51, 153, 255],
 				[255, 0, 255],
-				[0, 255, 0],		
+				[0, 255, 0],
 				[255, 0, 0]]
 
 # [x , y , colorId ]
 myPoints = []
-	
+
 # function to pick color of object
 def findColor(img, myColors, myColorValues):
 
@@ -56,14 +58,14 @@ def findColor(img, myColors, myColorValues):
 			newPoints.append([x,y,count])
 		count += 1
 	return newPoints
-	
+
 
 # contouyrs function used to improve accuracy of paint
 def getContours(img):
 	contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL,
 											cv2.CHAIN_APPROX_NONE)
 	x, y, w, h = 0, 0, 0, 0
-	
+
 	# working with contours
 	for cnt in contours:
 		area = cv2.contourArea(cnt)
@@ -72,34 +74,56 @@ def getContours(img):
 			approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
 			x, y, w, h = cv2.boundingRect(approx)
 	return x + w // 2, y
-	
+
 
 # draws your action on virtual canvas
 def drawOnCanvas(myPoints, myColorValues):
 	for point in myPoints:
 		cv2.circle(imgResult, (point[0], point[1]),
 				10, myColorValues[point[2]], cv2.FILLED)
-	
+
 # running infinite while loop so that
 # program keep running untill we close it
-while True:
-	success, img = cap.read()
-	imgResult = img.copy()
 
-	# finding the colors for the points
-	newPoints = findColor(img, myColors, myColorValues)
-	if len(newPoints)!= 0:
-		for newP in newPoints:
-			myPoints.append(newP)
-	if len(myPoints)!= 0:
+def timer(time):
+	cv2.putText(imgResult,
+		str(time),
+		(50,50),
+		cv2.FONT_HERSHEY_SIMPLEX, 1,
+		(0, 225, 255),
+		2,
+		cv2.LINE_4)
 
-		# drawing the points
-		drawOnCanvas(myPoints, myColorValues)
-	
-	# displaying output on Screen
-	cv2.imshow("Result", imgResult)
-	
-	# condition to break programs execution
-	# press q to stop the execution of program
-	if cv2.waitKey(1) and 0xFF == ord('q'):
-		break
+
+if __name__ == "__main__":
+
+	while True:
+		success, img = cap.read()
+		imgResult = img.copy()
+
+		# wait for 3 sec
+		if timeStart > 0 :
+			timer(timeStart)
+			time.sleep(1)
+			timeStart-= 1
+
+		else:
+			# finding the colors for the points
+			newPoints = findColor(img, myColors, myColorValues)
+			#Notif user to start
+
+			if len(newPoints)!= 0:
+				for newP in newPoints:
+					myPoints.append(newP)
+			if len(myPoints)!= 0:
+
+				# drawing the points
+				drawOnCanvas(myPoints, myColorValues)
+
+		# displaying output on Screen
+		cv2.imshow("Result", imgResult)
+		print(timeStart)
+		# condition to break programs execution
+		# press q to stop the execution of program
+		if cv2.waitKey(1) and 0xFF == ord('q'):
+			break
