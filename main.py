@@ -106,9 +106,6 @@ if __name__ == "__main__":
 		# wait for 10 sec
 		if timeStart >= 0 :
 
-			# finding the colors for the points
-			newPoints = findColor(img, myColors, myColorValues)
-
 			cv2.putText(imgResult,
 				'Place Color Inside Box',
 				(80,50),
@@ -126,6 +123,9 @@ if __name__ == "__main__":
 			timeStart-= 1
 
 		else:
+			# finding the colors for the points
+			newPoints = findColor(img, myColors, myColorValues)
+
 			if len(newPoints)!= 0:
 				for newP in newPoints:
 					myPoints.append(newP)
