@@ -22,7 +22,7 @@ cap.set(4, frameHeight)
 cap.set(10,150)
 
 # object color values
-myColors = [[5, 107, 0, 19, 255, 255]]
+myColors = [[110, 50, 50, 130, 255, 255]]
 
 # color values which will be used to paint
 # values needs to be in BGR
@@ -41,7 +41,6 @@ def findColor(img, myColors, myColorValues):
 	imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	count = 0
 	newPoints = []
-	print(imgHSV[1].shape)
 	cv2.imshow("imgHSV", imgHSV)
 
 	# running for loop to work with all colors
@@ -50,7 +49,7 @@ def findColor(img, myColors, myColorValues):
 		upper = np.array(color[3:6])
 		mask = cv2.inRange(imgHSV,lower,upper)
 		x, y = getContours(mask)
-
+		x = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) - x
 		# making the circles
 		cv2.circle(imgResult, (x,y), 15,
 				myColorValues[count], cv2.FILLED)
@@ -80,7 +79,7 @@ def getContours(img):
 def drawOnCanvas(myPoints, myColorValues):
 	for point in myPoints:
 		cv2.circle(imgResult, (point[0], point[1]),
-				10, myColorValues[point[2]], cv2.FILLED)
+				8, myColorValues[point[2]], cv2.FILLED)
 
 # running infinite while loop so that
 # program keep running untill we close it
@@ -100,6 +99,7 @@ if __name__ == "__main__":
 	while True:
 		success, img = cap.read()
 		imgResult = img.copy()
+		imgResult = cv2.flip(imgResult, 1)
 
 		# wait for 3 sec
 		if timeStart > 0 :
@@ -122,7 +122,6 @@ if __name__ == "__main__":
 
 		# displaying output on Screen
 		cv2.imshow("Result", imgResult)
-		print(timeStart)
 		# condition to break programs execution
 		# press q to stop the execution of program
 		if cv2.waitKey(1) and 0xFF == ord('q'):
