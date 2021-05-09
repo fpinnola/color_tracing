@@ -10,7 +10,7 @@ import numpy as np
 # set Width and Height of output Screen
 frameWidth = 640
 frameHeight = 480
-timeStart = 3
+timeStart = 10
 
 # capturing Video from Webcam
 cap = cv2.VideoCapture(0)
@@ -96,22 +96,36 @@ def timer(time):
 
 if __name__ == "__main__":
 
+	time.sleep(3)
+
 	while True:
 		success, img = cap.read()
 		imgResult = img.copy()
 		imgResult = cv2.flip(imgResult, 1)
 
-		# wait for 3 sec
-		if timeStart > 0 :
+		# wait for 10 sec
+		if timeStart >= 0 :
+
+			# finding the colors for the points
+			newPoints = findColor(img, myColors, myColorValues)
+
+			cv2.putText(imgResult,
+				'Place Color Inside Box',
+				(80,50),
+				cv2.FONT_HERSHEY_SIMPLEX, 1,
+				(0, 225, 255),
+				2,
+				cv2.LINE_4)
+			cv2.rectangle(imgResult,
+				(100,100),
+				(400,440),
+				(0, 255, 255),
+				2)
 			timer(timeStart)
 			time.sleep(1)
 			timeStart-= 1
 
 		else:
-			# finding the colors for the points
-			newPoints = findColor(img, myColors, myColorValues)
-			#Notif user to start
-
 			if len(newPoints)!= 0:
 				for newP in newPoints:
 					myPoints.append(newP)
