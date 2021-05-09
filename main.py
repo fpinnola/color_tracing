@@ -10,7 +10,7 @@ import numpy as np
 # set Width and Height of output Screen
 frameWidth = 640
 frameHeight = 480
-timeStart = 10
+timeStart = 150
 
 # capturing Video from Webcam
 cap = cv2.VideoCapture(0)
@@ -22,7 +22,10 @@ cap.set(4, frameHeight)
 cap.set(10,150)
 
 # object color values
-myColors = [[110, 50, 50, 130, 255, 255]]
+myColors = [[110, 50, 50, 130, 255, 255],
+			[133, 56, 0, 159, 156, 255],
+            [57, 76, 0, 100, 255, 255],
+            [90, 48, 0, 118, 255, 255]]
 
 # color values which will be used to paint
 # values needs to be in BGR
@@ -41,7 +44,6 @@ def findColor(img, myColors, myColorValues):
 	imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	count = 0
 	newPoints = []
-	cv2.imshow("imgHSV", imgHSV)
 
 	# running for loop to work with all colors
 	for color in myColors:
@@ -113,13 +115,32 @@ if __name__ == "__main__":
 				(0, 225, 255),
 				2,
 				cv2.LINE_4)
+			height, width, depth = imgResult.shape
+			circle_img = np.zeros((height, width), np.uint8)
+			roi_size = 20 # 10x10
+			roi_values = imgResult[int((height - roi_size) / 2):int((height + roi_size) / 2), int((width - roi_size) / 2):int((width + roi_size) / 2)]
+			mean_blue = np.mean(roi_values[:,:,0])
+			mean_green = np.mean(roi_values[:,:,1])
+			mean_red = np.mean(roi_values[:,:,2])
+			hsv_roi = cv2.cvtColor(roi_values, cv2.COLOR_BGR2HSV)
+			mean_h = np.mean(hsv_roi[:,:,0])
+			mean_s = np.mean(hsv_roi[:,:,1])
+			mean_v = np.mean(hsv_roi[:,:,2])
+			hsvGreen = [mean_h, mean_s, mean_v]
+			lowerLimit = [int(max(mean_h - 10, 0)), 100, 100]
+			upperLimit = [int(mean_h + 10), 255, 255]
+			print((lowerLimit, upperLimit))
+			myColors = [lowerLimit + upperLimit]
+			myColorValues[0] = [mean_blue, mean_green, mean_red]
+			print(myColors)
+
+
 			cv2.rectangle(imgResult,
-				(100,100),
-				(400,440),
+				(int((width - roi_size) / 2),int((height - roi_size) / 2)),
+				(int((width + roi_size) / 2),int((height + roi_size) / 2)),
 				(0, 255, 255),
 				2)
-			timer(timeStart)
-			time.sleep(1)
+			timer(int(timeStart / 20))
 			timeStart-= 1
 
 		else:
