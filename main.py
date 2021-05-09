@@ -104,6 +104,9 @@ def reset():
 	timeStart = 150
 	myPoints = []
 
+def clear():
+	global myPoints
+	myPoints = []
 
 if __name__ == "__main__":
 
@@ -136,8 +139,8 @@ if __name__ == "__main__":
 			mean_s = np.mean(hsv_roi[:,:,1])
 			mean_v = np.mean(hsv_roi[:,:,2])
 			hsvGreen = [mean_h, mean_s, mean_v]
-			lowerLimit = [int(max(mean_h - 10, 0)), 100, 100]
-			upperLimit = [int(mean_h + 10), 255, 255]
+			lowerLimit = [int(max(mean_h - 5, 0)), 50, 50]
+			upperLimit = [int(mean_h + 5), 255, 255]
 			myColors = [lowerLimit + upperLimit]
 			myColorValues[0] = [mean_blue, mean_green, mean_red]
 
@@ -154,6 +157,13 @@ if __name__ == "__main__":
 			# finding the colors for the points
 			newPoints = findColor(img, myColors, myColorValues)
 
+			cv2.putText(imgResult,
+				'Press \'r\' to reset, \'c\' to clear, or \'q\' to quit',
+				(80,50),
+				cv2.FONT_HERSHEY_SIMPLEX, 1,
+				(0, 225, 255),
+				2,
+				cv2.LINE_4)
 
 			if len(newPoints)!= 0:
 				for newP in newPoints:
@@ -172,4 +182,6 @@ if __name__ == "__main__":
 			break
 		elif key == ord('r'):
 			reset()
+		elif key == ord('c'):
+			clear()
 
