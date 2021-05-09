@@ -98,10 +98,16 @@ def timer(time):
 		2,
 		cv2.LINE_4)
 
+# Restart program by pressing 'r' key
+def reset():
+	global timeStart, myPoints
+	timeStart = 150
+	myPoints = []
+
 
 if __name__ == "__main__":
 
-	time.sleep(3)
+	time.sleep(1)
 
 	while True:
 		success, img = cap.read()
@@ -148,6 +154,7 @@ if __name__ == "__main__":
 			# finding the colors for the points
 			newPoints = findColor(img, myColors, myColorValues)
 
+
 			if len(newPoints)!= 0:
 				for newP in newPoints:
 					myPoints.append(newP)
@@ -160,5 +167,9 @@ if __name__ == "__main__":
 		cv2.imshow("Result", imgResult)
 		# condition to break programs execution
 		# press q to stop the execution of program
-		if cv2.waitKey(1) and 0xFF == ord('q'):
+		key = cv2.waitKey(10)
+		if key == ord('q'):
 			break
+		elif key == ord('r'):
+			reset()
+
