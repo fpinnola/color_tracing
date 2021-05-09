@@ -1,4 +1,7 @@
 '''
+Project: Color Tracer
+Team Members: Patrick Biesty, Daniel Zatko, Frank Pinnola
+I pledge my honor that I have abided by the Stevens Honor System
 Credit: https://www.geeksforgeeks.org/live-webcam-drawing-using-opencv/
 '''
 
@@ -129,10 +132,8 @@ if __name__ == "__main__":
 			hsvGreen = [mean_h, mean_s, mean_v]
 			lowerLimit = [int(max(mean_h - 10, 0)), 100, 100]
 			upperLimit = [int(mean_h + 10), 255, 255]
-			print((lowerLimit, upperLimit))
 			myColors = [lowerLimit + upperLimit]
 			myColorValues[0] = [mean_blue, mean_green, mean_red]
-			print(myColors)
 
 
 			cv2.rectangle(imgResult,
